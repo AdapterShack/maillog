@@ -8,6 +8,6 @@ This is based on the answer to this question: http://unix.stackexchange.com/ques
 
 Usage:
 
-maillog.sh <filename> <email address>
+maillog.sh _filename_ _email-address_
 
 Obviously, it only works if there is a working sendmail on the system.
