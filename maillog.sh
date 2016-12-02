@@ -4,9 +4,7 @@ if [ $# != 2 ]; then
         echo "Usage: $0 <file> <email address>"
 else
 
-        tmpdir="/tmp/$(uuidgen)"
-
-        mkdir $tmpdir
+        tmpdir=`mktemp -d`
 
         zipfile="$tmpdir/$1.zip"
 
