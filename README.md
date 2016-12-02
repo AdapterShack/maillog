@@ -1,13 +1,13 @@
 # maillog
 Send a file as MIME attachment from a Unix system that does not have any fancy MTA installed, not even
-a common text-mode client such as MUTT installed. Uses only sendmail to send the message.
+a common text-mode client such as MUTT installed. Uses only mailx to send the message.
+
+The file is zipped to minimize the size of the mail.
 
 This is most useful for retrieving log files from "backend" systems.
-
-This is based on the answer to this question: http://unix.stackexchange.com/questions/102092/mail-send-email-with-attachment-from-commandline
 
 Usage:
 
 maillog.sh _filename_ _email-address_
 
-Obviously, it only works if there is a working sendmail on the system.
+Obviously, it only works if there is a working mailx on the system.
