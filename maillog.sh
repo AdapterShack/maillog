@@ -6,11 +6,13 @@ else
 
         tmpdir=`mktemp -d`
 
-        zipfile="$tmpdir/$1.zip"
+        zipname=`basename $1`
 
-        zip -9 $zipfile $1
+        zipfile="$tmpdir/$zipname.zip"
 
-        echo "$1 is attached" | mailx -s "Sending: $1" -a $zipfile $2
+        zip -D -9 $zipfile $1
+
+        echo "$zipname is attached" | mailx -s "Sending: $zipname" -a $zipfile $2
 
         rm $zipfile
 
