@@ -5,7 +5,7 @@ SMTP_HOST=localhost
 SMTP_PORT=25
 
 # UNCOMMENT IF YOU WANT TO PASSWORD THE ZIP FILE
-# ZIP_ARGS=-e
+#ZIP_ARGS=-e
 
 v_mailpart="$(uuidgen)"
 
@@ -21,32 +21,59 @@ else
 
         zipfile="$tmpdir/$zipname.zip"
 
-        zip $ZIP_ARGS -D -9 $zipfile $1
+	if which zip
+	then
+        	zip $ZIP_ARGS -D -9 $zipfile $1
+	elif which gzip
+	then 	
+		zipfile="$tmpdir/$zipname.gz"
+		gzip -c $1 > $zipfile
+	else
+		echo "Can't compress"
+		zipfile="$tmpdir/$zipname"
+		cp $1 $zipfile
+	fi
 
+	attachname=`basename $zipfile`
 
         # if they have mailx then just use it
         if which mailx
         then
 
-                 echo "$zipname is attached" | mailx -s "Sending: $zipname" -a $zipfile $2
+                 echo "$attachname is attached" | mailx -s "Sending: $zipname" -a $zipfile $2
 
         else
 
-                MAILDATA="To: $2
+
+		if which base64
+		then
+			ATTACHDATA="Content-Transfer-Encoding: base64
+Content-Type: application/octet-stream; name=$attachname
+Content-Disposition: attachment; filename=$attachname
+`base64 $zipfile`"
+		else
+			echo "Can't encode"
+			attachname=$zipname
+			ATTACHDATA="Content-Transfer-Encoding: 8bit
+Content-Type: application/octet-stream; name=$attachname
+Content-Disposition: attachment; filename=$attachname
+`cat $1`"                
+		fi
+
+		MAILDATA="To: $2
 Subject: Sending: $zipname
 Content-Type: multipart/mixed; boundary=\"$v_mailpart\"
 MIME-Version: 1.0
+
 This is a multi-part message in MIME format.
 --$v_mailpart
 Content-Type: text/html
 Content-Disposition: inline
-<html><body>$zipname.zip is attached</body></html>
+<html><body>$attachname is attached</body></html>
 --$v_mailpart
-Content-Transfer-Encoding: base64
-Content-Type: application/octet-stream; name=$zipname.zip
-Content-Disposition: attachment; filename=$zipname.zip
-`base64 $zipfile`
+$ATTACHDATA
 --$v_mailpart--"
+
 
                 SMTPDATA="MAIL FROM:<$USER@$HOSTNAME>
 RCPT TO:<$2>
