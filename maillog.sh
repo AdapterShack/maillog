@@ -1,8 +1,11 @@
 #!/bin/sh
 
 # MAY NEED TO EDIT THIS IF YOU DON'T HAVE MAILX
-SMTP_HOST=127.0.0.1
+SMTP_HOST=localhost
 SMTP_PORT=25
+
+# UNCOMMENT IF YOU WANT TO PASSWORD THE ZIP FILE
+# ZIP_ARGS=-e
 
 v_mailpart="$(uuidgen)"
 
@@ -18,7 +21,7 @@ else
 
         zipfile="$tmpdir/$zipname.zip"
 
-        zip -D -9 $zipfile $1
+        zip $ZIP_ARGS -D -9 $zipfile $1
 
 
         # if they have mailx then just use it
