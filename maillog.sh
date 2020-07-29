@@ -7,7 +7,13 @@ SMTP_PORT=25
 # UNCOMMENT IF YOU WANT TO PASSWORD THE ZIP FILE
 #ZIP_ARGS=-e
 
-v_mailpart="$(uuidgen)"
+if which uuidgen
+then
+	v_mailpart="$(uuidgen)"
+else
+	v_mailpart=`tr -dc A-Za-z0-9 </dev/urandom | head -c 80`
+fi
+
 
 if [ $# != 2 ]; then
         echo "Usage: $0 <file> <email address>"
